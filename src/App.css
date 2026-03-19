@@ -1,0 +1,72 @@
+/* =============================================
+   OVERALL PAGE
+   Centers everything on the screen
+   ============================================= */
+
+.app-title {
+  display: flex;
+  flex-direction: column;  /* Stacks the two lines vertically */
+  gap: 2px;                /* Tiny gap between the two heading lines */
+  align-items: center;     /* Centers them horizontally */
+}
+.app-title h1 {
+  margin: 0;
+}
+
+/* 'body' targets the entire page background */
+body {
+  display: flex;          /* Turns on Flexbox layout */
+  justify-content: center; /* Centers content left-to-right */
+  min-height: 100vh;      /* Makes the page at least as tall as the screen */
+  margin: 0;              /* Removes default browser spacing around the edge */
+  padding: 20px;          /* Adds a little breathing room on small screens */
+  box-sizing: border-box; /* Makes padding not add extra width (trust me on this one) */
+}
+
+/* =============================================
+   MAIN CARD
+   The white box that holds your whole app
+   ============================================= */
+
+.app-card {
+  display: flex;           /* Flexbox again — used to stack children vertically */
+  flex-direction: column;  /* Stack children top-to-bottom (default is side-by-side) */
+  width: 100%;             /* Take up full available width... */
+  max-width: 480px;        /* ...but never wider than 480px */
+  gap: 16px;               /* Adds space between each child element automatically */
+  align-items: center;  /* Centers everything inside the card */
+}
+
+/* =============================================
+   EACH STEP (label + dropdown together)
+   ============================================= */
+
+.step {
+  display: flex;
+  flex-direction: column;  /* Stack the label above the dropdown */
+  gap: 6px;                /* Small gap between label and dropdown */
+  align-items: center;  /* Centers the label and dropdown horizontally */
+}
+
+.fob-buttons {
+  display: flex;           /* Turns on Flexbox */
+  flex-direction: row;     /* Lines children up side by side (horizontal) */
+  justify-content: center; /* Centers the buttons horizontally */
+  gap: 8px;                /* Adds a little space between each button */
+}
+
+.results-section {
+  display: flex;
+  flex-direction: column;  /* Stacks results vertically */
+  align-items: center;     /* Centers everything inside horizontally */
+  width: 100%;             /* Takes up the full width of the card */
+}
+
+.results-title {
+  text-align: center;  /* Centers the text horizontally */
+  margin: 0;           /* Removes default browser spacing */
+}
+
+.step select {
+  width: 105px;
+}

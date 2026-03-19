@@ -1,0 +1,422 @@
+================================================================
+VEHICLE KEY LOOKUP APP — AI CONTEXT FILE
+================================================================
+Last Updated: Session 5 (complete)
+Purpose: Paste this file into any new Claude chat to bring it
+         up to speed instantly on this project.
+================================================================
+
+
+----------------------------------------------------------------
+SECTION 1: PROJECT OVERVIEW
+----------------------------------------------------------------
+
+WHAT THE APP DOES:
+A step-by-step web form where a user selects a vehicle
+(year → make → model) and answers a few questions to look up
+the correct key fob information from a Supabase database.
+
+WHO IS BUILDING IT:
+A beginner in web development. All code should include clear
+explanations of what it is doing. Avoid jargon without
+explaining it first. Changes should be explained line by line
+rather than delivering full rewrites — the builder wants to
+learn what each change does as they make it.
+
+TECH STACK:
+- React (created with npx create-react-app)
+- Supabase (cloud database, connected via JavaScript client)
+- All code lives in a single App.js file for simplicity
+- Plain CSS in App.css (chosen for simplicity and being the
+  foundational standard — best for a beginner)
+
+PROJECT FOLDER NAME: vehicle-key-lookup
+LOCATION: C:\Users\Toby\Desktop\vehicle-key-lookup
+
+
+----------------------------------------------------------------
+SECTION 2: FILE STRUCTURE
+----------------------------------------------------------------
+
+vehicle-key-lookup/
+├── src/
+│   ├── App.js              ← Main file, all logic and UI lives here
+│   ├── App.css             ← All custom styles live here
+│   └── supabaseClient.js   ← Sets up the Supabase database connection
+├── .env                    ← Stores Supabase URL and API key (secret)
+├── package.json            ← Project config, lists installed packages
+└── node_modules/           ← Installed packages (auto-generated, don't edit)
+
+
+----------------------------------------------------------------
+SECTION 3: DATABASE DETAILS
+----------------------------------------------------------------
+
+PLATFORM: Supabase
+TABLE NAME: key_database
+
+KNOWN COLUMNS:
+- year               (number — e.g. 2021)
+- make               (text — e.g. "Chevrolet")
+- model              (text — e.g. "Malibu")
+- push_button_start  (REMOVED FROM APP — column has too many data
+                      errors to be reliable. May be revisited later.)
+- fob_buttons        (data type still being confirmed — see current issues)
+- part_number        (text)
+- fcc_id             (text)
+- bin_number         (text)
+- reusable           (boolean — true or false)
+
+KNOWN DATA ISSUES:
+- Some year values contain typos (e.g. 2103 instead of 2013)
+- Year column is stored as a NUMBER, but HTML dropdowns return
+  values as STRINGS — this mismatch was causing query failures
+- push_button_start column had widespread data errors (mix of
+  text "Yes"/"No" and boolean true/false values). The entire
+  push button start step was removed from the app as a result.
+
+
+----------------------------------------------------------------
+SECTION 4: APP FEATURES (CURRENT STATE)
+----------------------------------------------------------------
+
+STEP-BY-STEP SELECTION FLOW:
+1. Year dropdown — filters to 1990 through current year + 1
+2. Make dropdown — only shows makes available for selected year
+3. Model dropdown — only shows models for selected year AND make
+4. Fob button count — only shows counts that exist in the database
+   for that exact vehicle; auto-skips if only one option exists
+5. Search button — only appears once all questions are answered
+
+NOTE: Push button start question has been removed from the flow.
+It may be added back later if the database column is cleaned up.
+
+RESULTS DISPLAY:
+- Part Number
+- FCC ID
+- Fob Buttons
+
+OTHER UI STATES:
+- Loading message while searching
+- Error message if something goes wrong
+- "No results found" message if no match
+- Start Over button to reset everything
+
+AUTO SCROLL:
+After each selection the page smoothly scrolls to the next step.
+This makes the app feel polished, especially on mobile.
+
+
+----------------------------------------------------------------
+SECTION 5: KEY CODE PATTERNS USED
+----------------------------------------------------------------
+
+PAGINATION:
+The database has more rows than Supabase returns in one request.
+All fetch functions loop using .range() to get every page of
+results until there are no more rows left.
+
+CASCADING FILTERS:
+Each dropdown is filtered by all previous selections so users
+only ever see options that actually exist in the database.
+
+AUTO-SELECT:
+If a step only has one possible answer (e.g. only one fob button
+count exists for a vehicle), the app skips that step and selects
+it automatically without asking the user.
+
+NUMBER CONVERSION:
+Year values from dropdowns come back as strings (e.g. "2021").
+The database stores years as numbers (e.g. 2021).
+Every Supabase query wraps year in Number() to convert it:
+  .eq('year', Number(year))
+
+CSS CLASS SYSTEM:
+Styles are applied using className= in React (not class= as in
+plain HTML). Classes are defined in App.css and imported at the
+top of App.js with: import './App.css';
+
+FLEXBOX LAYOUT:
+The app uses CSS Flexbox for layout. Key properties used:
+  display: flex          — turns on Flexbox
+  flex-direction: column — stacks children top-to-bottom
+  align-items: center    — centers children horizontally
+  gap: 16px              — adds space between children automatically
+
+REFS AND SCROLLING:
+useRef() is used to label specific elements on the page.
+A scrollTo() helper function smoothly scrolls to those elements.
+setTimeout() is used to delay the scroll slightly so React has
+time to render the next element before trying to scroll to it.
+The scrollTo function accepts a custom delay:
+  scrollTo(ref)        — uses default 300ms delay
+  scrollTo(ref, 500)   — uses 500ms delay (for slower steps)
+
+
+----------------------------------------------------------------
+SECTION 6: KNOWN BUGS FIXED
+----------------------------------------------------------------
+
+| Bug                        | Cause                          | Fix Applied                          |
+|----------------------------|--------------------------------|--------------------------------------|
+| Typo years in dropdown     | Bad data in DB (e.g. 2103)     | .gte('year', 1990) and .lte() filter |
+| Wrong makes showing        | No year filter on makes query  | Added .eq('year', Number(year))      |
+| Wrong models showing       | No year filter on models query | Added .eq('year', ...) + .eq('make') |
+| Stale dropdown options     | Not cleared on reset/change    | setMakes([]) and setModels([]) added |
+| Duplicate function error   | New code pasted on top of old  | Must Ctrl+A → Delete → Paste         |
+| Blank screen after model   | push_button_start data errors  | Removed push button step entirely    |
+
+
+----------------------------------------------------------------
+SECTION 7: CURRENT ISSUES (UNRESOLVED)
+----------------------------------------------------------------
+
+No known bugs at this time.
+
+NEXT STEP:
+Continue styling. The layout and scroll behaviour are complete.
+Remaining items to style: fob buttons, search button, results
+card, and Start Over button.
+
+
+----------------------------------------------------------------
+SECTION 8: STYLING STATUS
+----------------------------------------------------------------
+
+MOSTLY COMPLETE FOR LAYOUT. Detail styling still in progress.
+Approach: Plain CSS in App.css. Changes are being made
+incrementally so the builder understands each step.
+Visual goal: Clean and professional, neutral tones, lots of
+whitespace. Fully responsive (mobile + desktop).
+
+CSS CLASSES IN USE:
+- body           — centers the page using Flexbox, removes
+                   default margin, adds padding for small screens
+- .app-card      — main container; column flex, max-width 480px,
+                   gap between children, align-items center
+- .app-title     — wraps the two heading lines; column flex,
+                   2px gap, centered. h1 margin set to 0 inside.
+- .step          — wraps each label + dropdown; column flex,
+                   6px gap, align-items center
+- .step select   — sets dropdown width to 105px
+- .results-section — wraps results; column flex, align-items
+                     center, full width
+- .results-title — centers the Results heading, margin 0
+
+App.css changes made this session:
+- Added .app-title and .app-title h1 rules
+- Added align-items: center to .app-card and .step
+- Added .results-section and .results-title rules
+- Added .step select width rule
+
+App.js changes made this session:
+- Title changed from <h1> + <h2> to two <h1> tags inside
+  <div className="app-title">
+- Added className="results-section" to results wrapper div
+- Added className="results-title" to Results heading
+- Added useRef import alongside useState and useEffect
+- Added four refs: makeRef, modelRef, fobRef, searchRef,
+  resultsRef
+- Added ref={makeRef} to Make step div
+- Added ref={modelRef} to Model step div
+- Added ref={fobRef} to fob buttons div
+- Wrapped search button in <div ref={searchRef}>
+- Added ref={resultsRef} to results-section div
+- Added scrollTo() helper function above searchKeys
+- Added scrollTo(makeRef) to year onChange
+- Added scrollTo(modelRef) to make onChange
+- Added scrollTo(fobRef) to model onChange
+- Added scrollTo(searchRef, 500) to fob button onClick
+- Added scrollTo(resultsRef, 500) to end of searchKeys
+
+
+================================================================
+SESSION SUMMARIES
+================================================================
+
+
+----------------------------------------------------------------
+SESSION 1 — FOUNDATION (prior to this chat)
+----------------------------------------------------------------
+
+- Created React app with npx create-react-app
+- Installed Supabase with npm install @supabase/supabase-js
+- Created .env file with Supabase URL and API key
+- Created supabaseClient.js to establish database connection
+- Built initial App.js with:
+    - Year, make, model dropdowns
+    - Push button start Yes/No question
+    - Fob button count selector (hardcoded 2/3/4/5)
+    - Search button
+    - Results display
+    - Start Over button
+    - Loading, error, and no results states
+
+
+----------------------------------------------------------------
+SESSION 2 — BUG FIXING & CASCADING LOGIC
+----------------------------------------------------------------
+
+PROBLEMS ADDRESSED:
+- Year dropdown showed typo years like 2103
+- Makes dropdown showed all makes regardless of selected year
+- Models dropdown showed models from other years
+- No results being returned from search queries
+- Blank screen after selecting a model
+
+CHANGES MADE TO App.js:
+1. Added .gte('year', 1990) and .lte('year', currentYear+1) to
+   the years fetch query to block out-of-range years at the
+   database level. Also added a JavaScript .filter() as backup.
+
+2. Fixed the makes fetch to filter by selected year:
+   Added .eq('year', Number(year)) to the makes query.
+
+3. Fixed the models fetch to filter by both year AND make:
+   Added .eq('year', Number(year)) alongside .eq('make', make).
+
+4. Added Number() conversion around every year value passed
+   to Supabase queries, because dropdown values are strings
+   but the database stores years as numbers.
+
+5. Added two new useEffect hooks:
+   - fetchPushOptions: queries what push_button_start values
+     exist for the selected vehicle and auto-selects if only one
+   - fetchFobOptions: queries what fob_buttons values exist for
+     the selected vehicle + push button combo, auto-selects if one
+
+6. Added availablePushOptions and availableFobButtons state
+   variables so the UI only shows options that exist in the DB.
+
+7. Added a yellow on-screen debug box that appears after model
+   selection, showing raw query results without needing the
+   browser console.
+
+8. Fixed a duplicate function App() error caused by new code
+   being pasted on top of old code instead of replacing it.
+   Resolution: Ctrl+A to select all → Delete → then paste.
+
+SESSION END STATUS:
+App compiles and loads. Debug box is in place. Waiting to
+confirm whether the Number(year) fix resolved the blank screen
+issue after model selection.
+
+
+----------------------------------------------------------------
+SESSION 3 — PUSH BUTTON REMOVAL & DEBUG DIAGNOSIS
+----------------------------------------------------------------
+
+PROBLEMS ADDRESSED:
+- App was showing a blank screen after selecting a model
+- Debug box revealed push_button_start values were returning
+  as text ("Yes"/"No") not booleans (true/false)
+- The push_button_start column was found to have widespread
+  data errors throughout the entire database
+
+DIAGNOSIS:
+Using the yellow debug box, selected 2022 → Chevrolet → Malibu.
+Debug output showed:
+  - Rows returned: 2
+  - push_button_start values found: ["No"]
+  - No query errors
+This confirmed the data was coming back as text strings, not
+booleans. The auto-select logic was checking for === true
+(a boolean) but the data was "No" (a string), so it never fired.
+
+CHANGES MADE TO App.js:
+1. Removed the pushButton state variable.
+2. Removed the availablePushOptions state variable.
+3. Removed the entire fetchPushOptions useEffect block.
+4. Removed the push button start question from the UI (Step 4).
+5. Updated fetchFobOptions to run on model select instead of
+   waiting for push button. Removed push_button_start filter.
+6. Removed push_button_start filter from searchKeys function.
+7. Removed push button resets from resetSearch function.
+8. Removed debug box from App.js once no longer needed.
+
+SESSION END STATUS:
+App flow is now: Year → Make → Model → Fob Buttons → Search.
+Ready to test and then move on to styling.
+
+
+----------------------------------------------------------------
+SESSION 4 — STYLING STARTED (CSS LAYOUT & STRUCTURE)
+----------------------------------------------------------------
+
+DECISIONS MADE:
+- CSS approach chosen: Plain CSS in App.css
+- Visual style: Clean and professional, neutral tones,
+  lots of whitespace.
+- Layout: Fully responsive (mobile + desktop).
+- Teaching approach: Go slowly, explain each change line by line.
+
+CHANGES MADE TO App.css:
+1. Deleted all default create-react-app styles.
+2. Added body, .app-card, and .step rule blocks.
+
+CHANGES MADE TO App.js:
+1. Added import './App.css'; at the top of the file.
+2. Changed outer <div> to <div className="app-card">.
+3. Wrapped Year, Make, and Model dropdowns each in
+   <div className="step"> with a <label> above the <select>.
+
+SESSION END STATUS:
+Basic layout structure in place. Dropdowns centered and stacked.
+Fob buttons section styling not yet started.
+
+
+----------------------------------------------------------------
+SESSION 5 — STYLING CONTINUED & AUTO SCROLL ADDED
+----------------------------------------------------------------
+
+STYLING CHANGES MADE:
+
+1. Dropdowns resized to 105px wide using .step select rule.
+   This is just wide enough to fit "Mitsubishi" comfortably.
+
+2. Dropdowns and all card content centered using align-items:
+   center on both .app-card and .step.
+
+3. Search button sized and centered by adding className=
+   "search-button" and a matching CSS rule (width 160px,
+   align-self center). Later wrapped in a ref div instead.
+
+4. Title changed from <h1> + <h2> to two <h1> tags inside
+   <div className="app-title"> so browser default heading
+   margins could be removed and gap: 2px applied cleanly.
+
+5. Results heading centered using className="results-title"
+   with text-align: center and margin: 0.
+
+6. Results wrapper given className="results-section" with
+   display flex, flex-direction column, align-items center,
+   and width 100% so contents center correctly.
+
+AUTO SCROLL ADDED:
+
+Goal: After each selection, smoothly scroll to the next step.
+This makes the app feel polished, especially on mobile.
+
+Changes made to App.js:
+1. Added useRef to the import line.
+2. Added five refs: makeRef, modelRef, fobRef, searchRef,
+   resultsRef.
+3. Attached refs to their matching elements using ref={}.
+4. Added scrollTo() helper function:
+5. Called scrollTo in each step:
+   - Year onChange → scrollTo(makeRef)
+   - Make onChange → scrollTo(modelRef)
+   - Model onChange → scrollTo(fobRef)
+   - Fob button onClick → scrollTo(searchRef, 500)
+   - End of searchKeys → scrollTo(resultsRef, 500)
+
+SESSION END STATUS:
+Layout complete. Auto scroll working for all steps including
+scroll to results after search. Styling of fob buttons,
+search button, results card, and Start Over button still
+to be done next session.
+
+
+================================================================
+END OF CONTEXT FILE
+================================================================
